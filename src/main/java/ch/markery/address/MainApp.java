@@ -8,6 +8,7 @@ import ch.markery.address.model.Person;
 import ch.markery.address.model.PersonListWrapper;
 import ch.markery.address.view.PersonEditDialogController;
 import ch.markery.address.view.PersonOverviewController;
+import ch.markery.address.view.RootLayoutController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -66,18 +67,29 @@ public class MainApp extends Application {
         try {
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
+            loader.setLocation(MainApp.class
+                    .getResource("view/RootLayout.fxml"));
             rootLayout = (BorderPane) loader.load();
 
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
+
+            // Give the controller access to the main app.
+            RootLayoutController controller = loader.getController();
+            controller.setMainApp(this);
+
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
 
+        // Try to load last opened person file.
+        File file = getPersonFilePath();
+        if (file != null) {
+            loadPersonDataFromFile(file);
+        }
+    }
     /**
      * Shows the person overview inside the root layout.
      */
